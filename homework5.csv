@@ -1,0 +1,195 @@
+using System;
+
+public interface IVehicle{
+    void Drive();
+    void Refuel();
+}
+
+public class Car : IVehicle{
+    private string Brand;
+    private string Model;
+    private string FuelType;
+
+    public Car(string brand, string model, string fuelType){
+        Brand = brand;
+        Model = model;
+        FuelType = fuelType;
+    }
+
+    public void Drive(){
+        Console.WriteLine($"{Brand} {Model} едет со скоростью 100 км/ч.");
+    }
+
+    public void Refuel(){
+        Console.WriteLine($"{Brand} {Model} заправлен топливом: {FuelType}.");
+    }
+}
+
+public class Motorcycle : IVehicle{
+    private string Type;
+    private int EngineCapacity;
+
+    public Motorcycle(string type, int engineCapacity){
+        Type = type;
+        EngineCapacity = engineCapacity;
+    }
+
+    public void Drive(){
+        Console.WriteLine($"{Type} мотоцикл едет со скоростью 120 км/ч.");
+    }
+
+    public void Refuel(){
+        Console.WriteLine($"Мотоцикл с объемом двигателя {EngineCapacity} см³ заправлен.");
+    }
+}
+
+public class Truck : IVehicle{
+    private int Capacity;
+    private int AxleCount;
+
+    public Truck(int capacity, int axleCount){
+        Capacity = capacity;
+        AxleCount = axleCount;
+    }
+
+    public void Drive(){
+        Console.WriteLine($"Грузовик с грузоподъемностью {Capacity} тонн и {AxleCount} осями едет со скоростью 80 км/ч.");
+    }
+
+    public void Refuel(){
+        Console.WriteLine($"Грузовик с {AxleCount} осями заправлен.");
+    }
+}
+
+public class Bus : IVehicle{
+    private string Brand;
+    private int PassengerCapacity;
+
+    public Bus(string brand, int passengerCapacity){
+        Brand = brand;
+        PassengerCapacity = passengerCapacity;
+    }
+
+    public void Drive(){
+        Console.WriteLine($"{Brand} автобус везет {PassengerCapacity} пассажиров со скоростью 60 км/ч.");
+    }
+
+    public void Refuel(){
+        Console.WriteLine($"{Brand} автобус заправлен.");
+    }
+}
+
+public abstract class VehicleFactory{
+    public abstract IVehicle CreateVehicle();
+}
+
+public class CarFactory : VehicleFactory{
+    private string Brand;
+    private string Model;
+    private string FuelType;
+
+    public CarFactory(string brand, string model, string fuelType){
+        Brand = brand;
+        Model = model;
+        FuelType = fuelType;
+    }
+
+    public override IVehicle CreateVehicle(){
+        return new Car(Brand, Model, FuelType);
+    }
+}
+
+public class MotorcycleFactory : VehicleFactory{
+    private string Type;
+    private int EngineCapacity;
+
+    public MotorcycleFactory(string type, int engineCapacity){
+        Type = type;
+        EngineCapacity = engineCapacity;
+    }
+
+    public override IVehicle CreateVehicle(){
+        return new Motorcycle(Type, EngineCapacity);
+    }
+}
+
+public class TruckFactory : VehicleFactory{
+    private int Capacity;
+    private int AxleCount;
+
+    public TruckFactory(int capacity, int axleCount){
+        Capacity = capacity;
+        AxleCount = axleCount;
+    }
+
+    public override IVehicle CreateVehicle(){
+        return new Truck(Capacity, AxleCount);
+    }
+}
+
+public class BusFactory : VehicleFactory{
+    private string Brand;
+    private int PassengerCapacity;
+
+    public BusFactory(string brand, int passengerCapacity){
+        Brand = brand;
+        PassengerCapacity = passengerCapacity;
+    }
+
+    public override IVehicle CreateVehicle(){
+        return new Bus(Brand, PassengerCapacity);
+    }
+}
+
+public class Program{
+    public static void Main(string[] args){
+        VehicleFactory factory = null;
+
+        Console.WriteLine("Выберите транспортное средство: car, motorcycle, truck, bus");
+        string choice = Console.ReadLine().ToLower();
+
+        switch (choice){
+            case "car":
+                Console.WriteLine("Введите марку автомобиля:");
+                string carBrand = Console.ReadLine();
+                Console.WriteLine("Введите модель автомобиля:");
+                string carModel = Console.ReadLine();
+                Console.WriteLine("Введите тип топлива:");
+                string carFuelType = Console.ReadLine();
+                factory = new CarFactory(carBrand, carModel, carFuelType);
+                break;
+
+            case "motorcycle":
+                Console.WriteLine("Введите тип мотоцикла (спорт/турист):");
+                string motoType = Console.ReadLine();
+                Console.WriteLine("Введите объем двигателя (в см³):");
+                int engineCapacity = int.Parse(Console.ReadLine());
+                factory = new MotorcycleFactory(motoType, engineCapacity);
+                break;
+
+            case "truck":
+                Console.WriteLine("Введите грузоподъемность грузовика (в тоннах):");
+                int truckCapacity = int.Parse(Console.ReadLine());
+                Console.WriteLine("Введите количество осей:");
+                int axleCount = int.Parse(Console.ReadLine());
+                factory = new TruckFactory(truckCapacity, axleCount);
+                break;
+
+            case "bus":
+                Console.WriteLine("Введите марку автобуса:");
+                string busBrand = Console.ReadLine();
+                Console.WriteLine("Введите количество мест для пассажиров:");
+                int passengerCapacity = int.Parse(Console.ReadLine());
+                factory = new BusFactory(busBrand, passengerCapacity);
+                break;
+
+            default:
+                Console.WriteLine("Неверный выбор!");
+                return;
+        }
+
+        IVehicle vehicle = factory.CreateVehicle();
+        vehicle.Drive();
+        vehicle.Refuel();
+    }
+}
